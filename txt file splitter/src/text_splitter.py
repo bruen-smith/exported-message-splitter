@@ -1,13 +1,13 @@
 import os
 import re
 
-# -------- Settings --------
-INPUT_FILE = r"C:\Users\bruen\OneDrive\Downloads\Direct Messages - 《~★neisha★~》 [1348787283158892679].txt"
+# Settings
+INPUT_FILE = r"C:\Users\bruen\OneDrive\Downloads\large_text_file"
 OUTPUT_DIR = "chunks"
-OUTPUT_PREFIX = "discord_chunk_"
-TARGET_WORDS_PER_CHUNK = 450000  # stays under NotebookLM 500k limit
+OUTPUT_PREFIX = "text_chunk_"
+TARGET_WORDS_PER_CHUNK = 450000  # adjust based on limit
 
-# -------- Helpers --------
+# Helpers
 
 # Detects lines like:
 # [1/19/2023 13:59] username
@@ -22,13 +22,13 @@ def count_words(text: str) -> int:
     return len(text.split())
 
 
-# -------- Load file --------
+# Load file
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 with open(INPUT_FILE, "r", encoding="utf-8") as f:
     lines = f.readlines()
 
-# -------- Group lines into full messages --------
+# Group lines into full messages
 messages = []
 current_message = []
 
@@ -45,13 +45,13 @@ if current_message:
 
 print(f"Total messages parsed: {len(messages)}")
 
-# -------- Create chunks by WORD COUNT, not by lines --------
+# Create chunks by WORD COUNT, not by lines
 chunk_index = 1
 current_chunk = []
 current_word_total = 0
 
 for msg in messages:
-    msg_word_count = count_words(msg)
+    msg_word_count = count_words(msg) # change to count_lines(msg) if lines is the goal
 
     # If adding this message would exceed chunk size → save file
     if current_word_total + msg_word_count > TARGET_WORDS_PER_CHUNK and current_chunk:
@@ -82,3 +82,4 @@ if current_chunk:
     print(f"Created: {filename} (approx {current_word_total} words)")
 
 print("Done!")
+
